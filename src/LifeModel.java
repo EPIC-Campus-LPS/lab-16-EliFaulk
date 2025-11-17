@@ -129,7 +129,17 @@ public class LifeModel implements ActionListener
      */
     public void oneGeneration()
     {
-    	
+    	for (int x = 0; x < 60; x++) {
+    		for (int y = 0; y < 60; y++) {
+    			int neighbors = numLiveNeighbors(x, y);
+    			if ((neighbors == 2 && myGrid[x][y].isAliveNow()) || (neighbors == 3)) {
+    				myGrid[x][y].setAliveNext(true);
+    			} else {
+    				myGrid[x][y].setAliveNext(false);
+    			}
+    		}
+    	}
+    	updateNextGen();
     } 
     
     /**
@@ -139,7 +149,15 @@ public class LifeModel implements ActionListener
      * use for each loops
      */
     private void updateNextGen() {
-
+    	for (LifeCell[] row : myGrid) {
+    		for (LifeCell cell : row) {
+    			if (cell.isAliveNext()) {
+    				cell.setAliveNow(true);
+    			} else {
+    				cell.setAliveNow(false);
+    			}
+    		}
+    	}
     }
      
     /**
@@ -154,7 +172,24 @@ public class LifeModel implements ActionListener
      */
     private int numLiveNeighbors (int row, int col)
     {
-       return 0;
+    	int neighbors = 0;
+    	for (int i = 0; i < 3; i++) {
+    		if (inBounds(row-1, col-1+i) && myGrid[row-1][col-1+i].isAliveNow()) {
+    			neighbors++;
+    		}
+    	}
+    	if (inBounds(row, col-1) && myGrid[row][col-1].isAliveNow()) {
+    		neighbors++;
+    	}
+    	if (inBounds(row, col+1) && myGrid[row][col+1].isAliveNow()) {
+    		neighbors++;
+    	}
+    	for (int j = 0; j < 3; j++) {
+    		if (inBounds(row+1, col-1+j) && myGrid[row+1][col-1+j].isAliveNow()) {
+    			neighbors++;
+    		}
+    	}
+    	return neighbors;
     }
     
     /**
@@ -167,6 +202,9 @@ public class LifeModel implements ActionListener
      */
     private boolean inBounds(int row, int col)
     {
+    	if ((row >= 0) && (row < 60) && (col >= 0) && (col < 60)) {
+    		return true;
+    	}
         return false;
     }
 }
